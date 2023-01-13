@@ -1,4 +1,4 @@
-public struct OnLaunch_iOS_Client {
+public struct OnLaunch {
     public private(set) var text = "Hello, World!"
 
     public init() {

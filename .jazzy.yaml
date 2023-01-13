@@ -1,5 +1,5 @@
 # Name of module being documented.
-module: OnLaunch_iOS_Client
+module: OnLaunch
 # Folder to output the HTML docs to
 output: docs
 
@@ -21,7 +21,7 @@ title: OnLaunch iOS Client
 # The SDK for which your code should be built.
 sdk: iphone
 # Source file pathnames to be included in documentation. Supports wildcards.
-include: Sources/OnLaunch-iOS-Client/**
+include: Sources/OnLaunch/**
 
 # Control whether Jazzy uses Swift Package Manager, xcodebuild, or swift-symbolgraph to build the module to be documented.
 # By default it uses xcodebuild if there is a .xcodeproj file in the source directory.
