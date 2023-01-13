@@ -28,12 +28,12 @@ if danger.github.pullRequest.title.contains("WIP") || danger.github.pullRequest.
 }
 
 // Warn when there is a big PR
-var bigPRThreshold = 600;
+let bigPRThreshold = 600
 if (danger.github.pullRequest.additions ?? 0) + (danger.github.pullRequest.deletions ?? 0) > bigPRThreshold {
     danger.warn("""
      Pull Request size seems relatively large. If this Pull Request contains multiple changes, please split
      each into separate PR will helps faster, easier review.
-    """);
+    """)
 }
 
 // Warning message for not updated package manifest(s)
