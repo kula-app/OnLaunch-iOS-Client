@@ -8,10 +8,10 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
-        .library(name: "OnLaunch-iOS-Client", targets: ["OnLaunch-iOS-Client"]),
+        .library(name: "OnLaunch", targets: ["OnLaunch"]),
     ],
     targets: [
-        .target(name: "OnLaunch-iOS-Client"),
-        //dev .testTarget(name: "OnLaunch-iOS-ClientTests", dependencies: ["OnLaunch-iOS-Client"]),
+        .target(name: "OnLaunch"),
+        .testTarget(name: "OnLaunchTests", dependencies: ["OnLaunch"]),
     ]
 )

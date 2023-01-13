@@ -78,7 +78,7 @@ jobs:
           PROFDATA_PATH=$(pwd)/$(find DerivedData -name "*.profdata")
           echo "Detected profdata at path: $PROFDATA_PATH"
           xcrun llvm-cov export \
-            $(pwd)/DerivedData/Build/Products/Debug-iphonesimulator/OnLaunch-iOS-ClientTests.xctest/OnLaunch-iOS-ClientTests \
+            $(pwd)/DerivedData/Build/Products/Debug-iphonesimulator/OnLaunchTests.xctest/OnLaunchTests \
             --instr-profile $PROFDATA_PATH \
             --format="lcov" > coverage/coverage.lcov
 
