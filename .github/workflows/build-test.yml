@@ -21,7 +21,7 @@ jobs:
             xcode: "13.4.1"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # Set the fetch-depth > 1 or set to 0 for codecov upload detection
           fetch-depth: 2
