@@ -22,5 +22,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            OnLaunch_iOS_Client.sha256
-            OnLaunch_iOS_Client.zip
+            OnLaunch.sha256
+            OnLaunch.zip
