@@ -1,0 +1,60 @@
+name: Build, Lint & Test
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Enable development dependencies
+        run: sed -i.bak "s/\/\/dev//g" Package.swift
+
+      - name: Install Homebrew dependencies
+        run: brew install xcbeautify
+
+      - name: Build & Test for iOS 16
+        run: |
+          set -o pipefail && \
+          env NSUnbufferedIO=YES \
+          xcodebuild \
+            -workspace . \
+            -scheme "OnLaunch-iOS-Client" \
+            -sdk iphonesimulator \
+            -destination "OS=$(xcrun --sdk iphonesimulator --show-sdk-version),name=iPhone 14 Pro" \
+            -enableCodeCoverage YES \
+            -derivedDataPath DerivedData \
+            CODE_SIGNING_ALLOWED="NO" \
+            build test 2>&1 | tee test-output.log | xcbeautify
+
+      - name: Upload test log file on error
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: test-output.log
+          path: test-output.log
+
+      - name: Generate code coverage reports
+        run: |
+          mkdir -p coverage
+          PROFDATA_PATH=$(pwd)/$(find DerivedData -name "*.profdata")
+          echo "Detected profdata at path: $PROFDATA_PATH"
+          xcrun llvm-cov export \
+            $(pwd)/DerivedData/Build/Products/Debug-iphonesimulator/OnLaunch-iOS-ClientTests.xctest/OnLaunch-iOS-ClientTests \
+            --instr-profile $PROFDATA_PATH \
+            --format="lcov" > coverage/coverage.lcov
+
+      - name: Upload code coverage to Codecov
+        run: |
+          bash <(curl -s https://codecov.io/bash) \
+            -J 'OnLaunch-iOS-Client' \
+            -G coverage/coverage.lcov
