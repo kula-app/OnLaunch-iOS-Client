@@ -24,6 +24,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          # Set the fetch-depth > 1 or set to 0 for codecov upload detection
+          fetch-depth: 2
 
       - name: Enable development dependencies
         run: sed -i.bak "s/\/\/dev//g" Package.swift
