@@ -20,7 +20,6 @@ jobs:
           - sim: "iOS 15"
             xcode: "13.4.1"
     steps:
-      - run: echo ${{ toJSON(matrix) }}
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -39,9 +38,7 @@ jobs:
       - name: Find Simulator Destination
         id: find-sim-destination
         run: |
-          ls -la /Applications/
-          xcrun simctl list
-          case "${{ matrix.os }}" in
+          case "${{ matrix.sim }}" in
             "iOS 16")
               echo SIM_DESTINATION="OS=16.2,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
               ;;
@@ -49,7 +46,7 @@ jobs:
               echo SIM_DESTINATION="OS=15.5,name=iPhone 13 Pro" >> $GITHUB_OUTPUT
               ;;
             *)
-              echo "Unknown OS: ${{ matrix.os }}"
+              echo "Unknown OS: ${{ matrix.sim }}"
               exit 1
               ;;
           esac
@@ -72,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: test-output-${{ matrix.os }}.log
+          name: test-output-${{ matrix.sim }}.log
           path: test-output.log
 
       - name: Generate code coverage reports
