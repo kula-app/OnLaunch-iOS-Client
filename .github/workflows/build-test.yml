@@ -8,10 +8,6 @@ on:
     branches:
       - main
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'main' }}
-
 jobs:
   build-test:
     name: Build & Test
@@ -24,6 +20,7 @@ jobs:
           - sim: "iOS 15"
             xcode: "13.4.1"
     steps:
+      - run: echo ${{ toJSON(matrix) }}
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
