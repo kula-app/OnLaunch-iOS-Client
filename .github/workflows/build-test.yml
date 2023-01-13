@@ -2,16 +2,25 @@ name: Build, Lint & Test
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
-  build:
-    runs-on: macos-latest
+  build-test:
+    name: Build & Test
+    runs-on: macos-12
+    strategy:
+      matrix:
+        destination:
+          - "OS=16.2,name=iPhone 14 Pro"
+          - "OS=15.5,name=iPhone 13 Pro"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -30,7 +39,7 @@ jobs:
             -workspace . \
             -scheme "OnLaunch-iOS-Client" \
             -sdk iphonesimulator \
-            -destination "OS=$(xcrun --sdk iphonesimulator --show-sdk-version),name=iPhone 14 Pro" \
+            -destination "${{ matrix.destination }}" \
             -enableCodeCoverage YES \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
@@ -54,7 +63,10 @@ jobs:
             --format="lcov" > coverage/coverage.lcov
 
       - name: Upload code coverage to Codecov
-        run: |
-          bash <(curl -s https://codecov.io/bash) \
-            -J 'OnLaunch-iOS-Client' \
-            -G coverage/coverage.lcov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage.lcov
+          name: codecov-umbrella
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
