@@ -1,0 +1,5 @@
+included:
+  - Sources
+  - Danger.swift
+excluded:
+  - Package.swift

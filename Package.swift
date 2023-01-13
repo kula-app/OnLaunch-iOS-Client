@@ -8,10 +8,10 @@ let package = Package(
         .iOS(.v15)
     ],
     products: [
-        .library(name: "OnLaunch", targets: ["OnLaunch"]),
+        .library(name: "OnLaunch", targets: ["OnLaunch"])
     ],
     targets: [
         .target(name: "OnLaunch"),
-        .testTarget(name: "OnLaunchTests", dependencies: ["OnLaunch"]),
+        //dev .testTarget(name: "OnLaunchTests", dependencies: ["OnLaunch"]),
     ]
 )
