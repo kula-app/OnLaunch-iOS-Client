@@ -57,7 +57,7 @@ jobs:
           env NSUnbufferedIO=YES \
           xcodebuild \
             -workspace . \
-            -scheme "OnLaunch" \
+            -scheme "OnLaunch-iOS-Client" \
             -sdk iphonesimulator \
             -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
             -enableCodeCoverage YES \
