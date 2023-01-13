@@ -7,3 +7,10 @@ DerivedData/
 .swiftpm/config/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+# Coverage
+coverage
+*.lcov
+
+# Log files
+*.log

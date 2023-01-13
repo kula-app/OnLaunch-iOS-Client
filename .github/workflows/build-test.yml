@@ -1,0 +1,92 @@
+name: Build, Lint & Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: macos-12
+    strategy:
+      matrix:
+        include:
+          - sim: "iOS 16"
+            xcode: "14.2"
+          - sim: "iOS 15"
+            xcode: "13.4.1"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          # Set the fetch-depth > 1 or set to 0 for codecov upload detection
+          fetch-depth: 2
+
+      - name: Enable development dependencies
+        run: sed -i.bak "s/\/\/dev//g" Package.swift
+
+      - name: Install Homebrew dependencies
+        run: brew install xcbeautify
+
+      - name: Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+      - name: Find Simulator Destination
+        id: find-sim-destination
+        run: |
+          case "${{ matrix.sim }}" in
+            "iOS 16")
+              echo SIM_DESTINATION="OS=16.2,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
+              ;;
+            "iOS 15")
+              echo SIM_DESTINATION="OS=15.5,name=iPhone 13 Pro" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown OS: ${{ matrix.sim }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Build & Test for iOS
+        run: |
+          set -o pipefail && \
+          env NSUnbufferedIO=YES \
+          xcodebuild \
+            -workspace . \
+            -scheme "OnLaunch-iOS-Client" \
+            -sdk iphonesimulator \
+            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -enableCodeCoverage YES \
+            -derivedDataPath DerivedData \
+            CODE_SIGNING_ALLOWED="NO" \
+            build test 2>&1 | tee test-output.log | xcbeautify
+
+      - name: Upload test log file on error
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: test-output-${{ matrix.sim }}.log
+          path: test-output.log
+
+      - name: Generate code coverage reports
+        run: |
+          mkdir -p coverage
+          PROFDATA_PATH=$(pwd)/$(find DerivedData -name "*.profdata")
+          echo "Detected profdata at path: $PROFDATA_PATH"
+          xcrun llvm-cov export \
+            $(pwd)/DerivedData/Build/Products/Debug-iphonesimulator/OnLaunch-iOS-ClientTests.xctest/OnLaunch-iOS-ClientTests \
+            --instr-profile $PROFDATA_PATH \
+            --format="lcov" > coverage/coverage.lcov
+
+      - name: Upload code coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage.lcov
+          name: codecov-umbrella
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
