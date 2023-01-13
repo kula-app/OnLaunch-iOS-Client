@@ -18,9 +18,11 @@ jobs:
     runs-on: macos-12
     strategy:
       matrix:
-        os:
-          - "iOS 16"
-          - "iOS 15"
+        include:
+          - sim: "iOS 16"
+            xcode: "14.2"
+          - sim: "iOS 15"
+            xcode: "13.4.1"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -34,13 +36,17 @@ jobs:
       - name: Install Homebrew dependencies
         run: brew install xcbeautify
 
+      - name: Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
       - name: Find Simulator Destination
         id: find-sim-destination
         run: |
+          ls -la /Applications/
           xcrun simctl list
           case "${{ matrix.os }}" in
             "iOS 16")
-              echo SIM_DESTINATION="OS=16.0,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
+              echo SIM_DESTINATION="OS=16.2,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
               ;;
             "iOS 15")
               echo SIM_DESTINATION="OS=15.5,name=iPhone 13 Pro" >> $GITHUB_OUTPUT
@@ -51,7 +57,7 @@ jobs:
               ;;
           esac
 
-      - name: Build & Test for iOS 16
+      - name: Build & Test for iOS
         run: |
           set -o pipefail && \
           env NSUnbufferedIO=YES \
@@ -69,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: test-output.log
+          name: test-output-${{ matrix.os }}.log
           path: test-output.log
 
       - name: Generate code coverage reports
