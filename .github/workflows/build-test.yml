@@ -89,4 +89,3 @@ jobs:
           name: codecov-umbrella
           flags: unittests
           fail_ci_if_error: true
-          verbose: true
