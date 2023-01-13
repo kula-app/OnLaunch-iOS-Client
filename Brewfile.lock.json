@@ -1,0 +1,27 @@
+{
+  "entries": {
+    "tap": {
+      "danger/tap": {
+        "revision": "b22ae31bd49e8fe59881d6d6cd1f8536ff8491e5"
+      }
+    },
+    "brew": {
+      "danger-swift": {
+        "version": "3.15.0",
+        "bottle": false
+      }
+    }
+  },
+  "system": {
+    "macos": {
+      "monterey": {
+        "HOMEBREW_VERSION": "3.6.18",
+        "HOMEBREW_PREFIX": "/opt/homebrew",
+        "Homebrew/homebrew-core": "ab0f7adb1367bd263063c15cf2b14d290a1658e5",
+        "CLT": "14.0.0.0.1.1661618636",
+        "Xcode": "14.2",
+        "macOS": "12.6"
+      }
+    }
+  }
+}
