@@ -3,7 +3,6 @@ name: Documentation
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 jobs:
   deploy_docs:
@@ -20,8 +19,8 @@ jobs:
 
       - name: Generate Documentation
         run: |
-          bundle exec jazzy \
-            --module-version 1.2.3
+          sed  -i.bak "s/title:\(.*\)/title:\1 (${{ github.ref }})/g" .jazzy.yaml
+          bundle exec jazzy
 
       - name: Fix Invalid URLs
         run: |
