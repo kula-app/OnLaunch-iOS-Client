@@ -19,8 +19,8 @@ jobs:
     strategy:
       matrix:
         os:
-          - "16"
-          - "15"
+          - "iOS 16"
+          - "iOS 15"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -39,10 +39,10 @@ jobs:
         run: |
           xcrun simctl list
           case ${{ matrix.os }} in
-            "16")
+            "iOS 16")
               echo SIM_DESTINATION="OS=16.2,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
               ;;
-            "15")
+            "iOS 15")
               echo SIM_DESTINATION="OS=15.5,name=iPhone 13 Pro" >> $GITHUB_OUTPUT
               ;;
             *)
