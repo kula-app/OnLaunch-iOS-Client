@@ -51,7 +51,7 @@ jobs:
               ;;
           esac
 
-      - name: Build & Test for iOS
+      - name: Build & Test Package for iOS
         run: |
           set -o pipefail && \
           env NSUnbufferedIO=YES \
@@ -61,6 +61,32 @@ jobs:
             -sdk iphonesimulator \
             -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
             -enableCodeCoverage YES \
+            -derivedDataPath DerivedData \
+            CODE_SIGNING_ALLOWED="NO" \
+            build test 2>&1 | tee test-output.log | xcbeautify
+
+      - name: Build Example for UIKit
+        run: |
+          set -o pipefail && \
+          env NSUnbufferedIO=YES \
+          xcodebuild \
+            -project Examples/Examples.xcodeproject \
+            -scheme "Example-UIKit" \
+            -sdk iphonesimulator \
+            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -derivedDataPath DerivedData \
+            CODE_SIGNING_ALLOWED="NO" \
+            build test 2>&1 | tee test-output.log | xcbeautify
+
+      - name: Build Example for SwiftUI
+        run: |
+          set -o pipefail && \
+          env NSUnbufferedIO=YES \
+          xcodebuild \
+            -project Examples/Examples.xcodeproject \
+            -scheme "Example-SwiftUI" \
+            -sdk iphonesimulator \
+            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
             build test 2>&1 | tee test-output.log | xcbeautify
