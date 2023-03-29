@@ -67,11 +67,10 @@ jobs:
 
       - name: Build Example for UIKit
         run: |
-          ls
           set -o pipefail && \
           env NSUnbufferedIO=YES \
           xcodebuild \
-            -project Examples/Examples.xcodeproject \
+            -project Examples/Examples.xcodeproj \
             -scheme "Example-UIKit" \
             -sdk iphonesimulator \
             -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
@@ -84,7 +83,7 @@ jobs:
           set -o pipefail && \
           env NSUnbufferedIO=YES \
           xcodebuild \
-            -project Examples/Examples.xcodeproject \
+            -project Examples/Examples.xcodeproj \
             -scheme "Example-SwiftUI" \
             -sdk iphonesimulator \
             -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
