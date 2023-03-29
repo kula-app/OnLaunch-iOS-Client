@@ -67,6 +67,7 @@ jobs:
 
       - name: Build Example for UIKit
         run: |
+          ls
           set -o pipefail && \
           env NSUnbufferedIO=YES \
           xcodebuild \
