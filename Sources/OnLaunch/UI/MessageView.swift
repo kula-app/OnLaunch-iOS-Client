@@ -25,7 +25,7 @@ internal struct MessageView: View {
                         .frame(width: 30, height: 30)
                         .padding(7)
                 })
-                .opacity(message.isBlocking ? 1.0 : 0.0)
+                .opacity(message.isBlocking ? 0.0 : 1.0)
             }
             .padding(.leading, 12)
             .padding(.trailing, 5)
