@@ -8,8 +8,8 @@ public class OnLaunch {
 
     public class Options {
 
-        /// URL where the OnLaunch API is hosted at.
-        public var api = "https://onlaunch.kula.app/v1/clients"
+        /// Base URL where the OnLaunch API is hosted at.
+        public var baseURL = "https://onlaunch.kula.app/v1/clients"
 
         /// Public key used to authenticate with the API
         public var publicKey: String?

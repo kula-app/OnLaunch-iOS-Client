@@ -12,6 +12,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "OnLaunch"),
-        //dev .testTarget(name: "OnLaunchTests", dependencies: ["OnLaunch"]),
+        .testTarget(name: "OnLaunchTests", dependencies: ["OnLaunch"]),
     ]
 )
