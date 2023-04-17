@@ -10,6 +10,7 @@ internal struct MessageView: View {
     // MARK: - State
 
     internal let message: Message
+    internal let completionHandler: () -> Void
 
     // MARK: - View Body
 
@@ -17,7 +18,10 @@ internal struct MessageView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Spacer()
-                Button(action: { }, label: {
+                Button(action: {
+                    dismiss()
+                    completionHandler()
+                }, label: {
                     Image(systemName: "xmark.circle.fill")
                         .symbolRenderingMode(.palette)
                         .resizable()
@@ -50,6 +54,7 @@ internal struct MessageView: View {
                             case .dismissButton:
                                 dismiss()
                             }
+                            completionHandler()
                         }, label: {
                             Text(action.title)
                                 .font(theme.action.font)

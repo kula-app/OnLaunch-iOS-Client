@@ -1,5 +1,7 @@
+import Foundation
+
 /// Structure of a message to be displayed to the user
-internal struct Message {
+internal struct Message: Identifiable {
 
     /// Unique identifier of this message.
     ///
