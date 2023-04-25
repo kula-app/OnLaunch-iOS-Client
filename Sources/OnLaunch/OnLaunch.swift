@@ -1,11 +1,13 @@
 import OSLog
 import SwiftUI
 import UIKit
+import Combine
 
 public class OnLaunch: NSObject {
 
     // MARK: - Types
 
+    /// Options used to control the behaviour of OnLaunch
     public class Options {
 
         /// Base URL where the OnLaunch API is hosted at.
@@ -27,14 +29,20 @@ public class OnLaunch: NSObject {
 
         /// Custom theme used by the UI
         public var theme = Theme.standard
+
+        /// Internal flag used to indicate that the SwiftUI host system is used
+        internal var isSwiftUIHost = false
     }
 
+    /// Closure used to modify the given options instance
     public typealias ConfigurationHandler = (Options) -> Void
 
     // MARK: - Public Static API
 
-    @discardableResult
-    public static func configure(_ configurationHandler: ConfigurationHandler) -> OnLaunch {
+    /// Initializes and configures OnLaunch
+    ///
+    /// This method should only be called once from your `AppDelegate` or `SceneDelegate`
+    @discardableResult public static func configure(_ configurationHandler: ConfigurationHandler) -> OnLaunch {
         if let client = OnLaunch.shared {
             os_log("OnLaunch is already configured, ignoring additional call", log: .onlaunch, type: .info)
             return client
@@ -57,11 +65,13 @@ public class OnLaunch: NSObject {
         }
     }
 
+    /// Triggers the OnLaunch client to fetch messages from the remote and conditionally present them on the configured host UI
+    ///
+    /// Before calling this method, make sure that `OnLaunch.configure` has been called. If you are using the SwiftUI view modifier
+    /// this will be done when the scene becomes active.
     public static func check() {
         guard let client = OnLaunch.shared else {
-            os_log("OnLaunch failed to check for messages, because it is not configured yet",
-                   log: .onlaunch, type: .error)
-            return
+            return assertionFailure("OnLaunch failed to check for messages, because it is not configured yet.")
         }
         client.check()
     }
@@ -88,7 +98,10 @@ public class OnLaunch: NSObject {
     private var messageQueue: [Message] = []
 
     /// The message which is currently presented
-    private var currentMessage: Message?
+    internal var currentMessage = CurrentValueSubject<Message?, Never>(nil)
+
+    /// Completion handler used by the SwiftUI implementation
+    private var swiftUIDismissCompletionHandler: () -> Void = { }
 
     // MARK: - Internal Initializer
 
@@ -105,6 +118,19 @@ public class OnLaunch: NSObject {
 
     // MARK: - Internal Methods
 
+    /// Helper function used to setup the completion handler for SwiftUI hosted views
+    internal func swiftUIContainerViewFor(message: Message) -> some View {
+        containerViewFor(message: message, completionHandler: swiftUIDismissCompletionHandler)
+    }
+
+    /// Creates the fully configured message view for the given `message`
+    private func containerViewFor(message: Message, completionHandler: @escaping () -> Void) -> some View {
+        MessageView(message: message, completionHandler: completionHandler)
+            .environment(\.theme, options.theme)
+    }
+
+    // MARK: - Private Methods
+
     /// Configures the client, i.e. registers for global notifications in the `NotificationCenter`
     private func configure() throws {
         /// noop
@@ -113,7 +139,7 @@ public class OnLaunch: NSObject {
     /// Performs a check with the remote and reacts accordingly.
     private func check() {
         os_log("Checking for messages...", log: .onlaunch, type: .info)
-        
+
         var request = URLRequest(url: baseURL
             .appendingPathComponent("messages"))
         request.setValue(options.publicKey, forHTTPHeaderField: "X-API-Key")
@@ -164,8 +190,8 @@ public class OnLaunch: NSObject {
                 return Action(kind: kind, title: action.title)
             })
         }
-        // Filter messages which are not blocking and have already been presented
         let filteredMessages = messages.filter { message in
+            // Only include messages which are blocking or have not already been presented
             message.isBlocking || !storage.isMessageMarkedAsPresented(id: message.id)
         }
         os_log("%i messages need to be presented", log: .onlaunch, type: .debug, filteredMessages.count)
@@ -176,7 +202,8 @@ public class OnLaunch: NSObject {
     private func processMessageQueue() {
         os_log("Processing message queue with %i messages", log: .onlaunch, type: .debug, messageQueue.count)
         // If a message is already presented, that means the queue is already being processed
-        guard currentMessage == nil else {
+        guard currentMessage.value == nil else {
+            os_log("Current message is not nil, ignoring call to process message queue", log: .onlaunch, type: .debug)
             return
         }
         // Take the first message in the queue
@@ -184,23 +211,32 @@ public class OnLaunch: NSObject {
             os_log("No more messages to process", log: .onlaunch, type: .debug)
             return
         }
+        os_log("Moved message with id %i from queue to current message", log: .onlaunch, type: .debug, message.id)
         messageQueue.remove(at: 0)
-        currentMessage = message
+        currentMessage.send(message)
 
         present(message: message) { message in
             os_log("Completed presenting message %i", log: .onlaunch, type: .debug, message.id)
-            self.currentMessage = nil
+            self.currentMessage.send(nil)
             self.storage.markMessageAsPresented(id: message.id)
             self.processMessageQueue()
         }
     }
 
     private func present(message: Message, completionHandler: @escaping (Message) -> Void) {
-        // Create the UI
-        let rootView = MessageView(message: message, completionHandler: {
+        os_log("Presenting message with id %i", log: .onlaunch, type: .debug, message.id)
+        // Check if the SwiftUI host system is used
+        if options.isSwiftUIHost {
+            swiftUIDismissCompletionHandler = {
+                completionHandler(message)
+            }
+            return
+        }
+
+        // Otherwise present the view controller as usual using UIKit modal presentation
+        let hostingController = UIHostingController(rootView: containerViewFor(message: message, completionHandler: {
             completionHandler(message)
-        }).environment(\.theme, options.theme)
-        let hostingController = UIHostingController(rootView: rootView)
+        }))
         hostingController.isModalInPresentation = true
 
         // Find the view controller used to present the OnLaunch UI
