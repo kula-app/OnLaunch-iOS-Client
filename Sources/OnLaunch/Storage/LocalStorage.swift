@@ -22,6 +22,7 @@ internal class LocalStorage {
 
     private func updateListOfMarkedMessages(ids: Set<Message.ID>) {
         defaults.set(ids.map { $0.description }, forKey: "message-ids")
+        defaults.synchronize()
     }
 
     private func readListOfMarkedMessages() -> Set<Message.ID> {
