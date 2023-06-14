@@ -74,7 +74,7 @@ struct MainApp: App {
     options.publicKey = "<YOUR PUBLIC APP KEY>"
 
     // (Optional) Configure a custom base URL to your API host
-    // options.baseURL = "https://your-domain.com/api/v0.1"
+    // options.baseURL = "https://your-domain.com/api"
 }
 ...
 ```
@@ -112,7 +112,7 @@ func sceneDidBecomeActive(_ scene: UIScene) {
     options.publicKey = "<YOUR PUBLIC APP KEY>"
 
     // (Optional) Configure a custom base URL to your API host
-    // options.baseURL = "https://your-domain.com/api/v0.1"
+    // options.baseURL = "https://your-domain.com/api"
 }
 ...
 ```
@@ -125,7 +125,7 @@ The OnLaunch iOS client provides a couple of configuration options:
 
 | Name                     | Description                                                                                                                                                                                                                                                              | Default                                                                                                                                                      |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `baseURL`                | Base URL where the OnLaunch API is hosted at. Change this to point to your self-hosted instance of the OnLaunch server.                                                                                                                                                  | `https://onlaunch.kula.app/api/v0.1/`                                                                                                                        |
+| `baseURL`                | Base URL where the OnLaunch API is hosted at. Change this to point to your self-hosted instance of the OnLaunch server.                                                                                                                                                  | `https://onlaunch.kula.app/api/`                                                                                                                             |
 | `publicKey`              | Public key used to authenticate with the API                                                                                                                                                                                                                             |                                                                                                                                                              |
 | `shouldCheckOnConfigure` | Flag indicating if the client should check for new messages immediately after it has been configured.                                                                                                                                                                    | `true`                                                                                                                                                       |
 | `hostScene`              | Scene used to host the OnLaunch client UI. Required if you use UIKit with scenes                                                                                                                                                                                         |                                                                                                                                                              |
