@@ -11,7 +11,7 @@ struct MainApp: App {
                     options.publicKey = "K2UX4fVPFyixVaeLn8Fky_uWhjMr-frADqKqpOCZW2c"
 
                     // (Optional) Configure a custom base URL to your API host
-                    // options.baseURL = "https://your-domain.com/api/v0.1"
+                    // options.baseURL = "https://your-domain.com/api"
                 }
         }
     }

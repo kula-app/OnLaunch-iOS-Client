@@ -11,7 +11,7 @@ public class OnLaunch: NSObject {
     public class Options {
 
         /// Base URL where the OnLaunch API is hosted at.
-        public var baseURL = "https://onlaunch.kula.app/api/v0.1/"
+        public var baseURL = "https://onlaunch.kula.app/api/"
 
         /// Public key used to authenticate with the API
         public var publicKey: String?
@@ -91,7 +91,7 @@ public class OnLaunch: NSObject {
     /// The `URLSession` used to send API requests
     internal let session: URLSession
 
-    /// URL used as the reference for all API calls, e.g. `https://onlaunch.kula.app/api/v0.1`
+    /// URL used as the reference for all API calls, e.g. `https://onlaunch.kula.app/api`
     private let baseURL: URL
 
     /// A `FIFO` queue of messages to present
@@ -141,6 +141,7 @@ public class OnLaunch: NSObject {
         os_log("Checking for messages...", log: .onlaunch, type: .info)
 
         var request = URLRequest(url: baseURL
+            .appendingPathComponent("v0.1")
             .appendingPathComponent("messages"))
         request.setValue(options.publicKey, forHTTPHeaderField: "X-API-Key")
 
