@@ -39,11 +39,11 @@ jobs:
         id: find-sim-destination
         run: |
           case "${{ matrix.sim }}" in
-            "iOS 16")
-              echo SIM_DESTINATION="OS=16.2,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
+            "iOS 17")
+              echo SIM_DESTINATION="OS=17.0,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
               ;;
-            "iOS 15")
-              echo SIM_DESTINATION="OS=15.5,name=iPhone 13 Pro" >> $GITHUB_OUTPUT
+            "iOS 16")
+              echo SIM_DESTINATION="OS=16.4,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
               ;;
             *)
               echo "Unknown OS: ${{ matrix.sim }}"
