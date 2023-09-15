@@ -4,7 +4,7 @@
   "packageRules": [
     {
       "matchPackageNames": ["macos"],
-      "allowedVersions": "(12|13)"
+      "allowedVersions": "/(12|13|latest)/"
     }
   ]
 }
