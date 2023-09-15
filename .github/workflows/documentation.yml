@@ -8,7 +8,7 @@ on:
 jobs:
   deploy_docs:
     name: Deploy Documentation
-    runs-on: macos-12
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
