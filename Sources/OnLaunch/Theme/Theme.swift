@@ -40,7 +40,7 @@ extension Theme {
     public static let standard = Theme(
         title: .init(
             font: Font.system(size: 34, weight: .bold),
-            color: Color.black
+            color: Color(UIColor.label)
         ),
         body: .init(
             font: Font.system(size: 19, weight: .medium),
