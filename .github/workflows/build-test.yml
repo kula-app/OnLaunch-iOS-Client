@@ -9,16 +9,18 @@ on:
       - main
 
 jobs:
-  build-test-13:
+  build-test-macos13:
     name: Build & Test
     runs-on: macos-13
     strategy:
       matrix:
         include:
-          - sim: "iOS 17"
+          - os: "iOS 17"
             xcode: "15.0"
-          - sim: "iOS 16"
+            destination: "OS=17.0,name=iPhone 14 Pro"
+          - os: "iOS 16"
             xcode: "14.3.1"
+            destination: "OS=16.4,name=iPhone 14 Pro"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,22 +37,6 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
-      - name: Find Simulator Destination
-        id: find-sim-destination
-        run: |
-          case "${{ matrix.sim }}" in
-            "iOS 17")
-              echo SIM_DESTINATION="OS=17.0,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
-              ;;
-            "iOS 16")
-              echo SIM_DESTINATION="OS=16.4,name=iPhone 14 Pro" >> $GITHUB_OUTPUT
-              ;;
-            *)
-              echo "Unknown OS: ${{ matrix.sim }}"
-              exit 1
-              ;;
-          esac
-
       - name: Build & Test Package for iOS
         run: |
           set -o pipefail && \
@@ -59,7 +45,7 @@ jobs:
             -workspace . \
             -scheme "OnLaunch-iOS-Client" \
             -sdk iphonesimulator \
-            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -destination "${{ matrix.destination }}" \
             -enableCodeCoverage YES \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
@@ -73,7 +59,7 @@ jobs:
             -project Examples/Examples.xcodeproj \
             -scheme "Example-UIKit" \
             -sdk iphonesimulator \
-            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
             build 2>&1 | tee test-output.log | xcbeautify
@@ -86,7 +72,7 @@ jobs:
             -project Examples/Examples.xcodeproj \
             -scheme "Example-SwiftUI" \
             -sdk iphonesimulator \
-            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
             build 2>&1 | tee test-output.log | xcbeautify
@@ -95,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: Test Output ${{ matrix.sim }}.log
+          name: Test Output ${{ matrix.os }}.log
           path: test-output.log
 
       - name: Generate code coverage reports
@@ -117,14 +103,15 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
 
-  build-test-12:
+  build-test-macos12:
     name: Build & Test
     runs-on: macos-12
     strategy:
       matrix:
         include:
-          - sim: "iOS 15"
+          - os: "iOS 15"
             xcode: "13.4.1"
+            destination: "OS=15.5,name=iPhone 13 Pro"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -141,19 +128,6 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
-      - name: Find Simulator Destination
-        id: find-sim-destination
-        run: |
-          case "${{ matrix.sim }}" in
-            "iOS 15")
-              echo SIM_DESTINATION="OS=15.5,name=iPhone 13 Pro" >> $GITHUB_OUTPUT
-              ;;
-            *)
-              echo "Unknown OS: ${{ matrix.sim }}"
-              exit 1
-              ;;
-          esac
-
       - name: Build & Test Package for iOS
         run: |
           set -o pipefail && \
@@ -162,7 +136,7 @@ jobs:
             -workspace . \
             -scheme "OnLaunch-iOS-Client" \
             -sdk iphonesimulator \
-            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -destination "${{ matrix.destination }}" \
             -enableCodeCoverage YES \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
@@ -176,7 +150,7 @@ jobs:
             -project Examples/Examples.xcodeproj \
             -scheme "Example-UIKit" \
             -sdk iphonesimulator \
-            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
             build 2>&1 | tee test-output.log | xcbeautify
@@ -189,7 +163,7 @@ jobs:
             -project Examples/Examples.xcodeproj \
             -scheme "Example-SwiftUI" \
             -sdk iphonesimulator \
-            -destination "${{ steps.find-sim-destination.outputs.SIM_DESTINATION }}" \
+            -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
             build 2>&1 | tee test-output.log | xcbeautify
@@ -198,7 +172,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: Test Output ${{ matrix.sim }}.log
+          name: Test Output ${{ matrix.os }}.log
           path: test-output.log
 
       - name: Generate code coverage reports
