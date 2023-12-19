@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build-test-macos13:
-    name: Build & Test
+    name: Build & Test - ${{ matrix.os }}
     runs-on: macos-13
     strategy:
       matrix:
@@ -108,7 +108,7 @@ jobs:
           fail_ci_if_error: true
 
   build-test-macos12:
-    name: Build & Test
+    name: Build & Test ${{ matrix.os }}
     runs-on: macos-12
     strategy:
       matrix:
