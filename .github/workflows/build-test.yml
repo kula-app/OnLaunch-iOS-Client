@@ -37,6 +37,9 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
+      - name: List Available Simulators
+        run: xcrun simctl list
+
       - name: Build & Test Package for iOS
         run: |
           set -o pipefail && \
