@@ -17,7 +17,7 @@ jobs:
         include:
           - os: "iOS 17"
             xcode: "15.0.1"
-            destination: "OS=17.0,name=iPhone 15 Pro"
+            destination: "OS=17.0.1,name=iPhone 15 Pro"
           - os: "iOS 16"
             xcode: "14.3.1"
             destination: "OS=16.4,name=iPhone 14 Pro"
@@ -36,9 +36,6 @@ jobs:
 
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
-
-      - name: List Available Simulators
-        run: xcrun simctl list
 
       - name: Build & Test Package for iOS
         run: |
