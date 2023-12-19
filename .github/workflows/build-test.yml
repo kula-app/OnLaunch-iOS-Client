@@ -82,7 +82,7 @@ jobs:
             build 2>&1 | tee test-output.log | xcbeautify
 
       - name: Upload test log file on error
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: Test Output ${{ matrix.os }}.log
@@ -173,7 +173,7 @@ jobs:
             build 2>&1 | tee test-output.log | xcbeautify
 
       - name: Upload test log file on error
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: Test Output ${{ matrix.os }}.log
