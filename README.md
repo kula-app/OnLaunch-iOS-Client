@@ -22,6 +22,8 @@
 [OnLaunch](https://github.com/kula-app/OnLaunch) is a service allowing app developers to notify app users about updates, warnings and maintenance
 Our open-source framework provides an easy-to-integrate client to communicate with the backend and display the user interface.
 
+![OnLaunch iOS](https://github.com/kula-app/OnLaunch-iOS-Client/tree/main/docs/ios_onlaunch_example.png)
+
 ## Features
 
 - Display customizable messages to your app users
