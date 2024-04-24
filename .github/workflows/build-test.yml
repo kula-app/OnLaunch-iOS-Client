@@ -35,9 +35,6 @@ jobs:
       - name: Enable development dependencies
         run: sed -i.bak "s/\/\/dev//g" Package.swift
 
-      - name: Install Homebrew dependencies
-        run: brew install xcbeautify
-
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
