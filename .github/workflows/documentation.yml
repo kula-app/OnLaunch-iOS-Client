@@ -23,7 +23,7 @@ jobs:
 
       - name: Generate Documentation
         run: |
-          REF_NAME=${{ github.ref }}
+          REF_NAME="${{ github.ref }}"
           sed  -i.bak "s/title:\(.*\)/title:\1 ($REF_NAME)/g" .jazzy.yaml
           bundle exec jazzy
 
