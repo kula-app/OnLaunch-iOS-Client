@@ -24,7 +24,11 @@ jobs:
       - name: Generate Documentation
         run: |
           sed  -i.bak "s/title:\(.*\)/title:\1 (${{ github.ref }})/g" .jazzy.yaml
-          bundle exec jazzy
+          SDK_PATH=`xcrun --sdk iphonesimulator --show-sdk-path`
+          SDK_VERSION=`xcrun --sdk iphonesimulator --show-sdk-version`
+          bundle exec jazzy \
+            -c .jazzy.yaml \
+            --build-tool-arguments "--sdk,${SDK_PATH},-Xswiftc,-sdk,-Xswiftc,$SDK_PATH,-Xswiftc,-target,-Xswiftc,arm64-apple-ios${SDK_VERSION}-simulator"
 
       - name: Fix Invalid URLs
         run: |
