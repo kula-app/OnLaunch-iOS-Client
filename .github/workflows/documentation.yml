@@ -23,7 +23,9 @@ jobs:
 
       - name: Generate Documentation
         run: |
-          sed  -i.bak "s/title:\(.*\)/title:\1 (${{ github.ref }})/g" .jazzy.yaml
+          ESCAPED_REF_NAME=$(echo "${{ github.ref }}" | sed 's/[\/&]/\\&/g')
+          sed  -i.bak "s/title:\(.*\)/title:\1 ($ESCAPED_REF_NAME)/g" .jazzy.yaml
+
           SDK_PATH=`xcrun --sdk iphonesimulator --show-sdk-path`
           SDK_VERSION=`xcrun --sdk iphonesimulator --show-sdk-version`
           bundle exec jazzy \
