@@ -1,6 +1,9 @@
 name: Documentation
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - "*.*.*"
@@ -29,6 +32,7 @@ jobs:
           touch .nojekyll
 
       - name: Commit files
+        if: github.event_name == 'push'
         run: |
           cd docs
           git init
@@ -39,6 +43,7 @@ jobs:
 
       - name: Push changes
         uses: ad-m/github-push-action@master
+        if: github.event_name == 'push'
         with:
           directory: docs
           github_token: ${{ secrets.GITHUB_TOKEN }}
