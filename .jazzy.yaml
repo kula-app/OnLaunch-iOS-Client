@@ -19,15 +19,32 @@ theme: fullwidth
 title: OnLaunch iOS Client
 
 # The SDK for which your code should be built.
-sdk: iphone
+sdk: iphonesimulator
 # Source file pathnames to be included in documentation. Supports wildcards.
 include: Sources/OnLaunch/**
-
 # Control whether Jazzy uses Swift Package Manager, xcodebuild, or swift-symbolgraph to build the module to be documented.
 # By default it uses xcodebuild if there is a .xcodeproj file in the source directory.
 swift_build_tool: spm
+
 # Arguments to forward to xcodebuild, swift build, or sourcekitten.
-build_tool_arguments: []
+#
+# THESE ARE PROBABLY OUTDATED BUT ARE OVERWRITTEN IN THE CI
+#
+# You can find the SDK path using:
+#
+#   xcrun --sdk iphonesimulator --show-sdk-path
+build_tool_arguments:
+  - --sdk
+  - /Applications/Xcode-15.3.0.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.4.sdk
+  - -Xswiftc
+  - -target
+  - -Xswiftc
+  - arm64-apple-ios17.2-simulator
+  - -Xswiftc
+  - -sdk
+  - -Xswiftc
+  - /Applications/Xcode-15.3.0.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.4.sdk
+
 # The base URL on the source host of the project's files, to link from individual declarations.
 # For example https://github.com/realm/realm-cocoa/tree/v0.87.1
 # source_host_files_url: ''
