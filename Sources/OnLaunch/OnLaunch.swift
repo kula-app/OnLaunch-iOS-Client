@@ -32,6 +32,22 @@ public class OnLaunch: NSObject {
 
         /// Internal flag used to indicate that the SwiftUI host system is used
         internal var isSwiftUIHost = false
+
+        /// Bundle identifier used by server-side rules.
+        ///
+        /// If not defined, it will fallback to `Bundle.main.bundleIdentifier`
+        public var bundleId: String?
+
+        /// The version of the build that identifies an iteration of the bundle.
+        ///
+        /// If not defined, it will fallback to the `CFBundleVersion` defined in `Info.plist`
+        public var bundleVersion: String?
+
+        /// The release or version number of the bundle.
+        ///
+        /// If not defined, it will fallback to the `CFBundleShortVersionString` defined in `Info.plist`
+        public var releaseVersion: String?
+
     }
 
     /// Closure used to modify the given options instance
@@ -140,11 +156,23 @@ public class OnLaunch: NSObject {
     private func check() {
         os_log("Checking for messages...", log: .onlaunch, type: .info)
 
+        // Create the authorized request
         var request = URLRequest(url: baseURL
             .appendingPathComponent("v0.1")
             .appendingPathComponent("messages"))
         request.setValue(options.publicKey, forHTTPHeaderField: "X-API-Key")
 
+        // Set the request context for server-side rule evaluation
+        let context = RequestContext(
+            bundleId: options.bundleId ?? Bundle.main.bundleIdentifier,
+            bundleVersion: options.bundleVersion ?? Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
+            releaseVersion: options.releaseVersion ?? Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+            platformName: UIDevice.current.systemName,
+            platformVersion: UIDevice.current.systemVersion
+        )
+        context.applyTo(request: &request)
+
+        // Send the message
         requestMessages(request: request)
     }
 
