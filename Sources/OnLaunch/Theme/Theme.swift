@@ -17,6 +17,7 @@ public struct Theme {
         public var color: Color
     }
 
+    /// 
     public struct Action {
 
         /// Font used for the title of the action buttons
