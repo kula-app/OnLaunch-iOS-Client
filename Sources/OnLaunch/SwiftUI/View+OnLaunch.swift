@@ -2,7 +2,6 @@ import SwiftUI
 
 /// Modifier used to integrate OnLaunch with SwiftUI
 public struct OnLaunchModifier: ViewModifier {
-
     /// Environment value used to track for scene updates
     @Environment(\.scenePhase) private var scenePhase
 
@@ -55,10 +54,9 @@ public struct OnLaunchModifier: ViewModifier {
     }
 }
 
-extension View {
-
+public extension View {
     /// Configures OnLaunch with the given `configurationHandler` and conditionally presents the OnLaunch UI
-    public func configureOnLaunch(_ configurationHandler: @escaping OnLaunch.ConfigurationHandler) -> some View {
-        self.modifier(OnLaunchModifier(configurationHandler: configurationHandler))
+    func configureOnLaunch(_ configurationHandler: @escaping OnLaunch.ConfigurationHandler) -> some View {
+        modifier(OnLaunchModifier(configurationHandler: configurationHandler))
     }
 }

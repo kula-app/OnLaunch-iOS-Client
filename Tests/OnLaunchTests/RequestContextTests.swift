@@ -1,8 +1,7 @@
-import XCTest
 @testable import OnLaunch
+import XCTest
 
 final class RequestContextTests: XCTestCase {
-
     func testApplyTo_bundleIdIsNotDefined_headerShouldNotBeSet() throws {
         // -- Arrange --
         var request = URLRequest(url: URL(string: "http://testing.local")!)

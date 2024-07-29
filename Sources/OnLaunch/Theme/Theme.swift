@@ -18,10 +18,8 @@ public struct Theme {
     }
 
     public struct Action {
-
         /// Font used for the title of the action buttons
         public var font: Font
-
     }
 
     /// Theme configuration of the message title
@@ -34,10 +32,9 @@ public struct Theme {
     public var action: Action
 }
 
-extension Theme {
-
+public extension Theme {
     /// Default theme unless something different is configured
-    public static let standard = Theme(
+    static let standard = Theme(
         title: .init(
             font: Font.system(size: 34, weight: .bold),
             color: Color(UIColor.label)

@@ -1,10 +1,8 @@
-import UIKit
 import OnLaunch
+import UIKit
 
 class ViewController: UIViewController {
-
-    @IBAction func checkForMessagesActions(_ sender: Any) {
+    @IBAction func checkForMessagesActions(_: Any) {
         OnLaunch.check()
     }
 }
-

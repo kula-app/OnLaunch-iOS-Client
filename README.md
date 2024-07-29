@@ -19,7 +19,7 @@
     <sub>Created and maintained by <a href="https://kula.app">kula.app</a> and all the amazing <a href="https://github.com/kula-app/OnLaunch-iOS-Client/graphs/contributors">contributors</a>.</sub>
 </p>
 
-[OnLaunch](https://github.com/kula-app/OnLaunch) is a service allowing app developers to notify app users about updates, warnings and maintenance
+[OnLaunch](https://github.com/kula-app/OnLaunch) is a service allowing app developers to notify app users about updates, warnings and maintenance.
 Our open-source framework provides an easy-to-integrate client to communicate with the backend and display the user interface.
 
 <p align="center">
@@ -135,6 +135,10 @@ The OnLaunch iOS client provides a couple of configuration options:
 | `hostScene`              | Scene used to host the OnLaunch client UI. Required if you use UIKit with scenes                                                                                                                                                                                         |                                                                                                                                                              |
 | `hostViewController`     | An instance of `UIViewController` used to host the OnLaunch client UI. Required if you use UIKit without scenes                                                                                                                                                          |                                                                                                                                                              |
 | `theme`                  | Custom theme used by the OnLaunch client UI. Adapt the values to change the theme to match your preferences. To see all possible configuration values, see [`Theme.swift`](https://github.com/kula-app/OnLaunch-iOS-Client/blob/main/Sources/OnLaunch/Theme/Theme.swift) | Default values as defined in `Theme.standard` in [Theme.swift](https://github.com/kula-app/OnLaunch-iOS-Client/blob/main/Sources/OnLaunch/Theme/Theme.swift) |
+| `bundleId`               | Bundle identifier used by server-side rules.                                                                                                                                                                                                                             | Uses value set in `Bundle.main.bundleIdentifier`                                                                                                             |
+| `bundleVersion`          | Version of the build that identifies an iteration of the bundle.                                                                                                                                                                                                         | `CFBundleVersion` defined in `Info.plist`                                                                                                                    |
+| `releaseVersion`         | Release or version number of the bundle.                                                                                                                                                                                                                                 | `CFBundleShortVersionString` defined in `Info.plist`                                                                                                         |
+| `appStoreId`             | ID of the app in the App Store. If not defined, the `ActionType.openInAppStore` will throw a non-crashing assertion                                                                                                                                                      |                                                                                                                                                              |
 
 ## Contributing Guide
 
