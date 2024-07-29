@@ -16,25 +16,11 @@ struct MessageActionView: View {
     @ViewBuilder
     var body: some View {
         switch action.kind {
-        case .button:
-            buttonView
         case .dismissButton:
             dismissButtonView
         case .openAppInAppStore:
             openAppInAppStoreButtonView
         }
-    }
-
-    var buttonView: some View {
-        Button(action: {
-            dismiss()
-        }, label: {
-            Text(action.title)
-                .font(theme.action.font)
-                .frame(maxWidth: .infinity)
-                .frame(minHeight: 50)
-        })
-        .buttonStyle(.borderedProminent)
     }
 
     var dismissButtonView: some View {

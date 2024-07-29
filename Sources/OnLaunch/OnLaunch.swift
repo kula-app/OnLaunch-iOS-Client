@@ -225,12 +225,13 @@ public class OnLaunch: NSObject {
                     actions: message.actions.compactMap { action in
                         let kind: Action.Kind
                         switch action.actionType {
-                        case .button:
-                            kind = .button
-                        case .dismissButton:
+                        case .dismiss:
                             kind = .dismissButton
                         case .openInAppStore:
                             kind = .openAppInAppStore
+                        default:
+                            os_log("Unknown action type: %@", log: .onlaunch, type: .error, action.actionType.rawValue)
+                            return nil
                         }
                         return Action(kind: kind, title: action.title)
                     })

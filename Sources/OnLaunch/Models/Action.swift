@@ -2,9 +2,6 @@
 struct Action {
     /// Different kinds of actions, used to implement different behaviour
     enum Kind {
-        /// Action is implemented as a generic button with an associated action
-        case button
-
         /// Action is represented as a button which dismisses the UI
         case dismissButton
 
