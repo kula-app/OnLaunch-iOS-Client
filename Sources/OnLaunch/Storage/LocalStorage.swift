@@ -1,8 +1,7 @@
 import Foundation
 import os.log
 
-internal class LocalStorage {
-
+class LocalStorage {
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .init(suiteName: "OnLaunch")!) {

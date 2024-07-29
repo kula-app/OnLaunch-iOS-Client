@@ -1,7 +1,6 @@
 import SwiftUI
 
-internal struct MessageView: View {
-
+struct MessageView: View {
     // MARK: - Environment
 
     @Environment(\.theme) private var theme: Theme
@@ -9,12 +8,13 @@ internal struct MessageView: View {
 
     // MARK: - State
 
-    internal let message: Message
-    internal let completionHandler: () -> Void
+    let message: Message
+    let options: OnLaunch.Options
+    let completionHandler: () -> Void
 
     // MARK: - View Body
 
-    internal var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Spacer()
@@ -45,30 +45,37 @@ internal struct MessageView: View {
                         .multilineTextAlignment(.leading)
                 }
                 .padding(.vertical, 20)
-                VStack(spacing: 12) {
-                    ForEach(Array(message.actions.enumerated()), id: \.0) { _, action in
-                        Button(action: {
-                            switch action.kind {
-                            case .button:
-                                dismiss()
-                            case .dismissButton:
-                                dismiss()
-                            }
-                            completionHandler()
-                        }, label: {
-                            Text(action.title)
-                                .font(theme.action.font)
-                                .frame(maxWidth: .infinity)
-                                .frame(minHeight: 50)
-                        })
-                        .buttonStyle(.borderedProminent)
-                    }
-                }
+                actionsView
             }
             .frame(maxWidth: .infinity)
             .padding(.bottom, 12)
             .padding(.horizontal, 16)
         }
         .padding(.vertical, 12)
+    }
+
+    var actionsView: some View {
+        VStack(spacing: 12) {
+            ForEach(Array(message.actions.enumerated()), id: \.0) { _, action in
+                MessageActionView(
+                    action: action,
+                    dismiss: {
+                        dismiss()
+                        completionHandler()
+                    },
+                    openAppInAppStore: {
+                        guard let appStoreId = options.appStoreId,
+                              let url = URL(string: "https://apps.apple.com/app/id\(appStoreId)") else {
+                            return assertionFailure("Failed to create App Store store page url")
+                        }
+                        UIApplication.shared.open(url) { success in
+                            if !success {
+                                assertionFailure("Failed to open URL: \(url)")
+                            }
+                        }
+                    }
+                )
+            }
+        }
     }
 }

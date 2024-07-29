@@ -5,8 +5,7 @@ private struct ThemeEnvironmentKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-
-    internal var theme: Theme {
+    var theme: Theme {
         get {
             self[ThemeEnvironmentKey.self]
         }

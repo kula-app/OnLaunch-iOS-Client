@@ -1,8 +1,7 @@
-import UIKit
 import OnLaunch
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
 
     func sceneDidBecomeActive(_ scene: UIScene) {
@@ -17,7 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
             // (Optional) Configure a custom base URL to your API host
             // options.baseURL = "https://your-domain.com/api"
+
+            // (Optional) Configure the App Store id, required by the action 'OPEN_IN_APP_STORE'
+            options.appStoreId = 409_201_541
         }
     }
 }
-

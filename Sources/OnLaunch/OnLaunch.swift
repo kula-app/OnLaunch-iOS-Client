@@ -1,15 +1,13 @@
+import Combine
 import OSLog
 import SwiftUI
 import UIKit
-import Combine
 
 public class OnLaunch: NSObject {
-
     // MARK: - Types
 
     /// Options used to control the behaviour of OnLaunch
     public class Options {
-
         /// Base URL where the OnLaunch API is hosted at.
         public var baseURL = "https://onlaunch.kula.app/api/"
 
@@ -31,23 +29,27 @@ public class OnLaunch: NSObject {
         public var theme = Theme.standard
 
         /// Internal flag used to indicate that the SwiftUI host system is used
-        internal var isSwiftUIHost = false
+        var isSwiftUIHost = false
 
         /// Bundle identifier used by server-side rules.
         ///
         /// If not defined, it will fallback to `Bundle.main.bundleIdentifier`
         public var bundleId: String?
 
-        /// The version of the build that identifies an iteration of the bundle.
+        /// Version of the build that identifies an iteration of the bundle.
         ///
         /// If not defined, it will fallback to the `CFBundleVersion` defined in `Info.plist`
         public var bundleVersion: String?
 
-        /// The release or version number of the bundle.
+        /// Release or version number of the bundle.
         ///
         /// If not defined, it will fallback to the `CFBundleShortVersionString` defined in `Info.plist`
         public var releaseVersion: String?
 
+        /// ID of the app in the App Store
+        ///
+        /// If not defined, the ``ActionType.openInAppStore`` will throw a non-crashing assertion
+        public var appStoreId: Int?
     }
 
     /// Closure used to modify the given options instance
@@ -69,7 +71,7 @@ public class OnLaunch: NSObject {
 
             let client = try OnLaunch(options: options)
             try client.configure()
-            self.shared = client
+            shared = client
 
             if options.shouldCheckOnConfigure {
                 check()
@@ -94,18 +96,18 @@ public class OnLaunch: NSObject {
 
     // MARK: - Internal Static State
 
-    internal static var shared: OnLaunch?
+    static var shared: OnLaunch?
 
     // MARK: - Internal State
 
     /// Options as defined by the library user
-    internal var options: Options
+    var options: Options
 
     /// Instance used to store data
-    internal let storage: LocalStorage
+    let storage: LocalStorage
 
     /// The `URLSession` used to send API requests
-    internal let session: URLSession
+    let session: URLSession
 
     /// URL used as the reference for all API calls, e.g. `https://onlaunch.kula.app/api`
     private let baseURL: URL
@@ -114,14 +116,14 @@ public class OnLaunch: NSObject {
     private var messageQueue: [Message] = []
 
     /// The message which is currently presented
-    internal var currentMessage = CurrentValueSubject<Message?, Never>(nil)
+    var currentMessage = CurrentValueSubject<Message?, Never>(nil)
 
     /// Completion handler used by the SwiftUI implementation
-    private var swiftUIDismissCompletionHandler: () -> Void = { }
+    private var swiftUIDismissCompletionHandler: () -> Void = {}
 
     // MARK: - Internal Initializer
 
-    internal init(options: Options, storage: LocalStorage = LocalStorage(), session: URLSession = URLSession(configuration: .ephemeral)) throws {
+    init(options: Options, storage: LocalStorage = LocalStorage(), session: URLSession = URLSession(configuration: .ephemeral)) throws {
         self.options = options
         guard let baseURL = URL(string: options.baseURL) else {
             throw OnLaunchError.invalidBaseURL(options.baseURL)
@@ -135,14 +137,21 @@ public class OnLaunch: NSObject {
     // MARK: - Internal Methods
 
     /// Helper function used to setup the completion handler for SwiftUI hosted views
-    internal func swiftUIContainerViewFor(message: Message) -> some View {
-        containerViewFor(message: message, completionHandler: swiftUIDismissCompletionHandler)
+    func swiftUIContainerViewFor(message: Message) -> some View {
+        containerViewFor(
+            message: message,
+            completionHandler: swiftUIDismissCompletionHandler
+        )
     }
 
     /// Creates the fully configured message view for the given `message`
     private func containerViewFor(message: Message, completionHandler: @escaping () -> Void) -> some View {
-        MessageView(message: message, completionHandler: completionHandler)
-            .environment(\.theme, options.theme)
+        MessageView(
+            message: message,
+            options: options,
+            completionHandler: completionHandler
+        )
+        .environment(\.theme, options.theme)
     }
 
     // MARK: - Private Methods
@@ -209,15 +218,17 @@ public class OnLaunch: NSObject {
                     body: message.body,
                     isBlocking: message.blocking,
                     actions: message.actions.compactMap { action in
-                let kind: Action.Kind
-                switch action.actionType {
-                case .button:
-                    kind = .button
-                case .dismissButton:
-                    kind = .dismissButton
-                }
-                return Action(kind: kind, title: action.title)
-            })
+                        let kind: Action.Kind
+                        switch action.actionType {
+                        case .button:
+                            kind = .button
+                        case .dismissButton:
+                            kind = .dismissButton
+                        case .openInAppStore:
+                            kind = .openAppInAppStore
+                        }
+                        return Action(kind: kind, title: action.title)
+                    })
         }
         let filteredMessages = messages.filter { message in
             // Only include messages which are blocking or have not already been presented

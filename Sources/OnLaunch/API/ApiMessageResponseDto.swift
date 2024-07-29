@@ -1,23 +1,20 @@
 import Foundation
 
-internal struct ApiMessageResponseDto: Decodable {
-
-    internal struct Action: Decodable {
-
-        internal enum ActionType: String, Decodable {
+struct ApiMessageResponseDto: Decodable {
+    struct Action: Decodable {
+        enum ActionType: String, Decodable {
             case button = "BUTTON"
             case dismissButton = "DISMISS"
+            case openInAppStore = "OPEN_IN_APP_STORE"
         }
 
-        internal let actionType: ActionType
-        internal let title: String
-
+        let actionType: ActionType
+        let title: String
     }
 
-    internal let id: Int
-    internal let blocking: Bool
-    internal let title: String
-    internal let body: String
-    internal let actions: [Action]
-
+    let id: Int
+    let blocking: Bool
+    let title: String
+    let body: String
+    let actions: [Action]
 }
