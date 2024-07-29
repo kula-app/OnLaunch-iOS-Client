@@ -83,10 +83,11 @@ public class OnLaunch: NSObject {
         }
     }
 
-    /// Triggers the OnLaunch client to fetch messages from the remote and conditionally present them on the configured host UI
+    /// Triggers the OnLaunch client to fetch messages from the remote and conditionally present them on the configured
+    /// host user interface
     ///
-    /// Before calling this method, make sure that `OnLaunch.configure` has been called. If you are using the SwiftUI view modifier
-    /// this will be done when the scene becomes active.
+    /// Before calling this method, make sure that `OnLaunch.configure` has been called. If you are using the SwiftUI
+    /// view modifier this will be done when the scene becomes active.
     public static func check() {
         guard let client = OnLaunch.shared else {
             return assertionFailure("OnLaunch failed to check for messages, because it is not configured yet.")
@@ -123,7 +124,11 @@ public class OnLaunch: NSObject {
 
     // MARK: - Internal Initializer
 
-    init(options: Options, storage: LocalStorage = LocalStorage(), session: URLSession = URLSession(configuration: .ephemeral)) throws {
+    init(
+        options: Options,
+        storage: LocalStorage = LocalStorage(),
+        session: URLSession = URLSession(configuration: .ephemeral)
+    ) throws {
         self.options = options
         guard let baseURL = URL(string: options.baseURL) else {
             throw OnLaunchError.invalidBaseURL(options.baseURL)
@@ -194,10 +199,10 @@ public class OnLaunch: NSObject {
                     preconditionFailure("Expected HTTPURLResponse from URLSession, got: \(response)")
                 }
                 guard httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 else {
-                    throw OnLaunchError.failedToFetchMessages(response: httpResponse, data: String(data: data, encoding: .utf8))
+                    throw OnLaunchError.failedToFetchMessages(response: httpResponse, data: String(decoding: data, as: UTF8.self))
                 }
                 let decoder = JSONDecoder()
-                let messages = try decoder.decode([ApiMessageResponseDto].self, from: data)
+                let messages = try decoder.decode(ApiMessagesResponseDto.self, from: data)
                 os_log("Fetched %i messages", log: .onlaunch, type: .debug, messages.count)
                 await MainActor.run {
                     self.process(messageDtos: messages)
@@ -209,7 +214,7 @@ public class OnLaunch: NSObject {
         }
     }
 
-    private func process(messageDtos: [ApiMessageResponseDto]) {
+    private func process(messageDtos: ApiMessagesResponseDto) {
         os_log("Processing %i messages", log: .onlaunch, type: .debug, messageDtos.count)
         // Map the DTO to the known message
         let messages = messageDtos.map { message in
