@@ -1,3 +1,5 @@
+![OnLaunch](https://github.com/kula-app/OnLaunch/blob/main/res/github_header.png)
+
 # OnLaunch iOS Client
 
 <p align="center">
