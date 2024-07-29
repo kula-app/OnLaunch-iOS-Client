@@ -1,6 +1,7 @@
 struct ApiActionDto: Decodable {
     enum ActionType: RawRepresentable, Decodable {
         case dismiss
+        case link
         case openInAppStore
         case unknown(String)
 
@@ -8,6 +9,8 @@ struct ApiActionDto: Decodable {
             switch rawValue {
             case "DISMISS":
                 self = .dismiss
+            case "LINK":
+                self = .link
             case "OPEN_IN_APP_STORE":
                 self = .openInAppStore
             default:
@@ -19,6 +22,8 @@ struct ApiActionDto: Decodable {
             switch self {
             case .dismiss:
                 return "DISMISS"
+            case .link:
+                return "LINK"
             case .openInAppStore:
                 return "OPEN_IN_APP_STORE"
             case let .unknown(value):
@@ -29,4 +34,6 @@ struct ApiActionDto: Decodable {
 
     let actionType: ActionType
     let title: String
+
+    let link: ApiActionLinkDto?
 }

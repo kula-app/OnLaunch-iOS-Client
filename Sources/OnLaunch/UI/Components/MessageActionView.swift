@@ -1,49 +1,60 @@
 import SwiftUI
 
 struct MessageActionView: View {
+    // MARK: - Environment
+
     @Environment(\.theme) private var theme: Theme
 
-    let action: Action
-    let dismiss: () -> Void
-    let openAppInAppStore: () -> Void
+    // MARK: - State
 
-    init(action: Action, dismiss: @escaping () -> Void, openAppInAppStore: @escaping () -> Void) {
+    let action: Action
+
+    // MARK: - Actions
+
+    var dismiss: () -> Void = {}
+    var openAppInAppStore: () -> Void = {}
+    var openLink: (LinkAction) -> Void = { _ in }
+
+    // MARK: - Initializer
+
+    init(action: Action) {
         self.action = action
-        self.dismiss = dismiss
-        self.openAppInAppStore = openAppInAppStore
     }
 
-    @ViewBuilder
+    // MARK: - Content
+
     var body: some View {
-        switch action.kind {
-        case .dismissButton:
-            dismissButtonView
-        case .openAppInAppStore:
-            openAppInAppStoreButtonView
+        FilledButton(title: action.title) {
+            switch action.kind {
+            case .dismissButton:
+                dismiss()
+            case .openAppInAppStore:
+                openAppInAppStore()
+            case let .link(linkAction):
+                openLink(linkAction)
+            }
         }
     }
+}
 
-    var dismissButtonView: some View {
-        Button(action: {
-            dismiss()
-        }, label: {
-            Text(action.title)
-                .font(theme.action.font)
-                .frame(maxWidth: .infinity)
-                .frame(minHeight: 50)
-        })
-        .buttonStyle(.borderedProminent)
+// MARK: - Action Modifiers
+
+extension MessageActionView {
+    func dismissAction(_ action: @escaping () -> Void) -> Self {
+        var view = self
+        view.dismiss = action
+        return view
     }
 
-    var openAppInAppStoreButtonView: some View {
-        Button(action: {
-            openAppInAppStore()
-        }, label: {
-            Text(action.title)
-                .font(theme.action.font)
-                .frame(maxWidth: .infinity)
-                .frame(minHeight: 50)
-        })
-        .buttonStyle(.borderedProminent)
+    func openAppInAppStoreAction(_ action: @escaping () -> Void) -> Self {
+        var view = self
+        view.openAppInAppStore = action
+        return view
+    }
+
+    func openLinkAction(_ action: @escaping (LinkAction) -> Void) -> Self {
+        var view = self
+        view.openLink = action
+        return view
     }
 }

@@ -216,26 +216,7 @@ public class OnLaunch: NSObject {
 
     private func process(messageDtos: ApiMessagesResponseDto) {
         os_log("Processing %i messages", log: .onlaunch, type: .debug, messageDtos.count)
-        // Map the DTO to the known message
-        let messages = messageDtos.map { message in
-            Message(id: message.id,
-                    title: message.title,
-                    body: message.body,
-                    isBlocking: message.blocking,
-                    actions: message.actions.compactMap { action in
-                        let kind: Action.Kind
-                        switch action.actionType {
-                        case .dismiss:
-                            kind = .dismissButton
-                        case .openInAppStore:
-                            kind = .openAppInAppStore
-                        default:
-                            os_log("Unknown action type: %@", log: .onlaunch, type: .error, action.actionType.rawValue)
-                            return nil
-                        }
-                        return Action(kind: kind, title: action.title)
-                    })
-        }
+        let messages = DataMapper.mapMessageDtos(messageDtos)
         let filteredMessages = messages.filter { message in
             // Only include messages which are blocking or have not already been presented
             message.isBlocking || !storage.isMessageMarkedAsPresented(id: message.id)

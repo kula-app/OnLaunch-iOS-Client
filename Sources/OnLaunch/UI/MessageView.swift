@@ -12,6 +12,9 @@ struct MessageView: View {
     let options: OnLaunch.Options
     let completionHandler: () -> Void
 
+    @State private var presentedLinkUrl: URL?
+    @State private var shareSheetItems: [Any] = []
+
     // MARK: - View Body
 
     var body: some View {
@@ -52,30 +55,50 @@ struct MessageView: View {
             .padding(.horizontal, 16)
         }
         .padding(.vertical, 12)
+        .sheet(item: $presentedLinkUrl) { url in
+            SafariView(url: url)
+        }
+        .shareSheet(items: $shareSheetItems)
     }
 
     var actionsView: some View {
         VStack(spacing: 12) {
             ForEach(Array(message.actions.enumerated()), id: \.0) { _, action in
-                MessageActionView(
-                    action: action,
-                    dismiss: {
-                        dismiss()
-                        completionHandler()
-                    },
-                    openAppInAppStore: {
-                        guard let appStoreId = options.appStoreId,
-                              let url = URL(string: "https://apps.apple.com/app/id\(appStoreId)") else {
-                            return assertionFailure("Failed to create App Store store page url")
-                        }
-                        UIApplication.shared.open(url) { success in
-                            if !success {
-                                assertionFailure("Failed to open URL: \(url)")
-                            }
-                        }
-                    }
-                )
+                messageView(action: action)
             }
         }
+    }
+
+    fileprivate func messageView(action: Action) -> MessageActionView {
+        MessageActionView(action: action)
+            .dismissAction {
+                dismiss()
+                completionHandler()
+            }
+            .openAppInAppStoreAction {
+                guard let appStoreId = options.appStoreId,
+                      let url = URL(string: "https://apps.apple.com/app/id\(appStoreId)") else {
+                    return assertionFailure("Failed to create App Store store page url")
+                }
+                UIApplication.shared.open(url) { success in
+                    if !success {
+                        assertionFailure("Failed to open URL: \(url)")
+                    }
+                }
+            }
+            .openLinkAction { link in
+                switch link.target ?? .inAppBrowser {
+                case .inAppBrowser:
+                    presentedLinkUrl = link.url
+                case .shareSheet:
+                    shareSheetItems = [link.url]
+                case .systemBrowser:
+                    UIApplication.shared.open(link.url) { success in
+                        if !success {
+                            assertionFailure("Failed to open URL in system browser: \(link.url)")
+                        }
+                    }
+                }
+            }
     }
 }

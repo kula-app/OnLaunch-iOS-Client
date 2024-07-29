@@ -7,6 +7,9 @@ struct Action {
 
         /// Action is dedicated to open the current app's App Store Page
         case openAppInAppStore
+
+        /// Triggering the action should open the link in the 
+        case link(LinkAction)
     }
 
     /// Kind of the action
