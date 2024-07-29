@@ -48,7 +48,10 @@ public struct OnLaunchModifier: ViewModifier {
                     // This assertion is just for sanity checking during development.
                     // It assures that the `OnLaunch.configure` handler located in the `init` of this view modifier
                     // is not removed by accident.
-                    assertionFailure("OnLaunch failed to apply view modifier, because it is not configured yet. You should never see this error.")
+                    assertionFailure(
+                        "OnLaunch failed to apply view modifier, because it is not configured yet. "
+                            + "You should never see this error."
+                    )
                 }
         }
     }

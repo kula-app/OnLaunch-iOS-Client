@@ -3,3 +3,6 @@ included:
   - Danger.swift
 excluded:
   - Package.swift
+
+line_length:
+  warning: 160
