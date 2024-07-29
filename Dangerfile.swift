@@ -6,13 +6,6 @@ let danger = Danger()
 // Changelog entries are required for changes to library files.
 let allSourceFiles = danger.git.modifiedFiles + danger.git.createdFiles
 let sourceChanges = allSourceFiles.contains { $0.hasPrefix("Source") }
-let isNotTrivial = !danger.github.pullRequest.title.contains("#trivial")
-if isNotTrivial && sourceChanges {
-    danger.warn("""
-     Any changes to library code should be reflected in the Changelog.
-     Please consider adding a note there.
-    """)
-}
 
 // Ensure no copyright header
 let swiftFilesWithCopyright = allSourceFiles.filter {
