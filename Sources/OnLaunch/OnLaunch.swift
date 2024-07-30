@@ -172,7 +172,7 @@ public class OnLaunch: NSObject {
 
         // Create the authorized request
         var request = URLRequest(url: baseURL
-            .appendingPathComponent("v0.1")
+            .appendingPathComponent("v0.2")
             .appendingPathComponent("messages"))
         request.setValue(options.publicKey, forHTTPHeaderField: "X-API-Key")
 
