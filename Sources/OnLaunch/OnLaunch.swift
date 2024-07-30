@@ -178,24 +178,12 @@ public class OnLaunch: NSObject {
 
         // Set the request context for server-side rule evaluation
         let locale = Locale.autoupdatingCurrent
-        let languageCode: String?
-        let regionCode: String?
-        if #available(iOS 16, *) {
-            languageCode = locale.language.languageCode?.identifier
-        } else {
-            languageCode = locale.regionCode
-        }
-        if #available(iOS 16, *) {
-            regionCode = locale.region?.identifier
-        } else {
-            regionCode = locale.regionCode
-        }
         let context = RequestContext(
             bundleId: options.bundleId ?? Bundle.main.bundleIdentifier,
             bundleVersion: options.bundleVersion ?? Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
             locale: locale.identifier,
-            localeLanguageCode: languageCode,
-            localeRegionCode: regionCode,
+            localeLanguageCode: locale.languageCode,
+            localeRegionCode: locale.regionCode,
             platformName: UIDevice.current.systemName,
             platformVersion: UIDevice.current.systemVersion,
             releaseVersion: options.releaseVersion ?? Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
