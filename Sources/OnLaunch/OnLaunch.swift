@@ -177,12 +177,16 @@ public class OnLaunch: NSObject {
         request.setValue(options.publicKey, forHTTPHeaderField: "X-API-Key")
 
         // Set the request context for server-side rule evaluation
+        let locale = Locale.autoupdatingCurrent
         let context = RequestContext(
             bundleId: options.bundleId ?? Bundle.main.bundleIdentifier,
             bundleVersion: options.bundleVersion ?? Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
-            releaseVersion: options.releaseVersion ?? Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+            locale: locale.identifier,
+            localeLanguageCode: locale.languageCode,
+            localeRegionCode: locale.regionCode,
             platformName: UIDevice.current.systemName,
-            platformVersion: UIDevice.current.systemVersion
+            platformVersion: UIDevice.current.systemVersion,
+            releaseVersion: options.releaseVersion ?? Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         )
         context.applyTo(request: &request)
 
