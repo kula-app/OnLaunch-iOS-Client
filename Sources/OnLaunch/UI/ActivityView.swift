@@ -32,7 +32,7 @@ struct ActivityView: UIViewControllerRepresentable {
     }
 }
 
-public extension View {
+extension View {
     func shareSheet(
         items: Binding<[Any]>,
         applicationActivities: [UIActivity]? = nil,
