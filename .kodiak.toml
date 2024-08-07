@@ -1,22 +1,38 @@
 version = 1
 
-[update]
-autoupdate_label = "♻️ autoupdate"
-
 [approve]
-auto_approve_usernames = ["dependabot", "renovate"]
+# if a PR is ready, merge it, don't place it in the merge queue.
+prioritize_ready_to_merge = true # default: false
 
 [merge]
 method = "squash"
 automerge_label = "🚀 automerge"
 
+# If a PR's title matches this regex, Kodiak will not merge the PR. This is
+# useful to prevent merging work-in-progress PRs.
+blocking_title_regex = "^WIP:.*"
+
 [merge.automerge_dependencies]
 # only auto merge "minor" and "patch" version upgrades.
 # do not automerge "major" version upgrades.
 versions = ["minor", "patch"]
-usernames = []
+# automerge by upgrade version for pull requests authored by dependabot or renovate.
+usernames = ["dependabot", "renovate"]
 
 [merge.message]
-title = "pull_request_title"
-body = "pull_request_body"
+# use title of PR for merge commit.
+title = "pull_request_title" # default: "github_default"
+
+# use body of PR for merge commit.
+body = "pull_request_body" # default: "github_default"
+
 include_coauthors = true
+
+[update]
+autoupdate_label = "♻️ autoupdate"
+
+# immediately update a pull request's branch when outdated.
+always = true # default: false
+
+# do not update pull requests of these usernames.
+ignored_usernames = ["renovate"]
