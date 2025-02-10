@@ -13,16 +13,23 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
-  build-test-macos13:
+  build-test-iOS:
     name: Build & Test - ${{ matrix.os }}
-    runs-on: macos-13
+    runs-on: ${{ matrix.runs-on }}
     strategy:
+      fail-fast: false
       matrix:
         include:
+          - os: "iOS 18"
+            runs-on: macos-15
+            xcode: "16.2"
+            destination: "OS=18.2,name=iPhone 16 Pro"
           - os: "iOS 17"
-            xcode: "15.0.1"
-            destination: "OS=17.0.1,name=iPhone 15 Pro"
+            runs-on: macos-15
+            xcode: "15.4"
+            destination: "OS=17.5,name=iPhone 15 Pro"
           - os: "iOS 16"
+            runs-on: macos-13
             xcode: "14.3.1"
             destination: "OS=16.4,name=iPhone 14 Pro"
     steps:
@@ -38,7 +45,7 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
-      - name: Build & Test Package for iOS
+      - name: Build & test package for iOS
         run: |
           set -o pipefail && \
           env NSUnbufferedIO=YES \
@@ -50,9 +57,9 @@ jobs:
             -enableCodeCoverage YES \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
-            build test 2>&1 | tee test-output.log | xcbeautify
+            build test 2>&1 | xcbeautify --preserve-unbeautified
 
-      - name: Build Example for UIKit
+      - name: Build example for UIKit
         run: |
           set -o pipefail && \
           env NSUnbufferedIO=YES \
@@ -63,9 +70,9 @@ jobs:
             -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
-            build 2>&1 | tee test-output.log | xcbeautify
+            build 2>&1 | xcbeautify --preserve-unbeautified
 
-      - name: Build Example for SwiftUI
+      - name: Build example for SwiftUI
         run: |
           set -o pipefail && \
           env NSUnbufferedIO=YES \
@@ -76,102 +83,14 @@ jobs:
             -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
-            build 2>&1 | tee test-output.log | xcbeautify
+            build 2>&1 | xcbeautify --preserve-unbeautified
 
-      - name: Upload test log file on error
+      - name: Upload result files on failure
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: Test Output ${{ matrix.os }}.log
-          path: test-output.log
-
-      - name: Generate code coverage reports
-        run: |
-          mkdir -p coverage
-          PROFDATA_PATH=$(pwd)/$(find DerivedData -name "*.profdata")
-          echo "Detected profdata at path: $PROFDATA_PATH"
-          xcrun llvm-cov export \
-            $(pwd)/DerivedData/Build/Products/Debug-iphonesimulator/OnLaunchTests.xctest/OnLaunchTests \
-            --instr-profile $PROFDATA_PATH \
-            --format="lcov" > coverage/coverage.lcov
-
-      - name: Upload code coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage.lcov
-          name: codecov-umbrella
-          flags: unittests
-          fail_ci_if_error: true
-
-  build-test-macos12:
-    name: Build & Test - ${{ matrix.os }}
-    runs-on: macos-12
-    strategy:
-      matrix:
-        include:
-          - os: "iOS 15"
-            xcode: "13.4.1"
-            destination: "OS=15.5,name=iPhone 13 Pro"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          # Set the fetch-depth > 1 or set to 0 for codecov upload detection
-          fetch-depth: 2
-
-      - name: Enable development dependencies
-        run: sed -i.bak "s/\/\/dev//g" Package.swift
-
-      - name: Select Xcode
-        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
-
-      - name: Build & Test Package for iOS
-        run: |
-          set -o pipefail && \
-          env NSUnbufferedIO=YES \
-          xcodebuild \
-            -workspace . \
-            -scheme "OnLaunch-iOS-Client" \
-            -sdk iphonesimulator \
-            -destination "${{ matrix.destination }}" \
-            -enableCodeCoverage YES \
-            -derivedDataPath DerivedData \
-            CODE_SIGNING_ALLOWED="NO" \
-            build test 2>&1 | tee test-output.log | xcbeautify
-
-      - name: Build Example for UIKit
-        run: |
-          set -o pipefail && \
-          env NSUnbufferedIO=YES \
-          xcodebuild \
-            -project Examples/Examples.xcodeproj \
-            -scheme "Example-UIKit" \
-            -sdk iphonesimulator \
-            -destination "${{ matrix.destination }}" \
-            -derivedDataPath DerivedData \
-            CODE_SIGNING_ALLOWED="NO" \
-            build 2>&1 | tee test-output.log | xcbeautify
-
-      - name: Build Example for SwiftUI
-        run: |
-          set -o pipefail && \
-          env NSUnbufferedIO=YES \
-          xcodebuild \
-            -project Examples/Examples.xcodeproj \
-            -scheme "Example-SwiftUI" \
-            -sdk iphonesimulator \
-            -destination "${{ matrix.destination }}" \
-            -derivedDataPath DerivedData \
-            CODE_SIGNING_ALLOWED="NO" \
-            build 2>&1 | tee test-output.log | xcbeautify
-
-      - name: Upload test log file on error
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: Test Output ${{ matrix.os }}.log
-          path: test-output.log
+          name: Result ${{ matrix.os }}.xcresult
+          path: DerivedData/Logs/Test/*.xcresult
 
       - name: Generate code coverage reports
         run: |
