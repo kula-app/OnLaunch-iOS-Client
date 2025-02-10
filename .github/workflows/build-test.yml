@@ -32,11 +32,6 @@ jobs:
             runs-on: macos-13
             xcode: "15.2"
             destination: "OS=16.4,name=iPhone 14 Pro"
-          - os: "iOS 15"
-            runs-on: macos-13
-            xcode: "15.2"
-            destination: "OS=15.5,name=iPhone 13 Pro"
-            install-runtime: "iOS 15.5"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,10 +44,6 @@ jobs:
 
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
-
-      - name: Install runtime
-        if: ${{ matrix.install-runtime }}
-        run: sudo xcodes runtimes install "${{ matrix.install-runtime }}"
 
       - name: Build & Test Package for iOS
         run: |
