@@ -57,7 +57,7 @@ jobs:
             -enableCodeCoverage YES \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
-            build test 2>&1 | tee test-output.log | xcbeautify --preserve-unbeautified
+            build test 2>&1 | xcbeautify --preserve-unbeautified
 
       - name: Build Example for UIKit
         run: |
@@ -70,7 +70,7 @@ jobs:
             -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
-            build 2>&1 | tee test-output.log | xcbeautify --preserve-unbeautified
+            build 2>&1 | xcbeautify --preserve-unbeautified
 
       - name: Build Example for SwiftUI
         run: |
@@ -83,14 +83,14 @@ jobs:
             -destination "${{ matrix.destination }}" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED="NO" \
-            build 2>&1 | tee test-output.log | xcbeautify --preserve-unbeautified
+            build 2>&1 | xcbeautify --preserve-unbeautified
 
       - name: Upload test log file on error
         uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: Test Output ${{ matrix.os }}.log
-          path: test-output.log
+          path: DerivedData/Logs/Test/*.xcresult
 
       - name: Generate code coverage reports
         run: |
