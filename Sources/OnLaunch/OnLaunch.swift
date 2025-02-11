@@ -9,7 +9,7 @@ public class OnLaunch: NSObject {
     /// Options used to control the behaviour of OnLaunch
     public class Options {
         /// Base URL where the OnLaunch API is hosted at.
-        public var baseURL = "https://onlaunch.kula.app/api/"
+        public var baseURL = "https://api.onlaunch.app/api/"
 
         /// Public key used to authenticate with the API
         public var publicKey: String?
@@ -110,7 +110,7 @@ public class OnLaunch: NSObject {
     /// The `URLSession` used to send API requests
     let session: URLSession
 
-    /// URL used as the reference for all API calls, e.g. `https://onlaunch.kula.app/api`
+    /// URL used as the reference for all API calls, e.g. `https://api.onlaunch.app/api`
     private let baseURL: URL
 
     /// A `FIFO` queue of messages to present
