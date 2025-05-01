@@ -13,7 +13,7 @@ struct MainApp: App {
                     // (Optional) Configure a custom base URL to your API host
                     // options.baseURL = "https://your-domain.com/api"
 
-                    // (Optional) Configure the App Store id, required by the action "OPEN_IN_APP_STORE"
+                    // (Optional) Configure the App Store id, required by the action "OPEN_APP_IN_APP_STORE"
                     options.appStoreId = 409_201_541
                 }
         }

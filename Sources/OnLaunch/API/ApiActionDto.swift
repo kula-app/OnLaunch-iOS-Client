@@ -11,7 +11,7 @@ struct ApiActionDto: Decodable {
                 self = .dismiss
             case "LINK":
                 self = .link
-            case "OPEN_IN_APP_STORE":
+            case "OPEN_APP_IN_APP_STORE":
                 self = .openInAppStore
             default:
                 self = .unknown(rawValue)
@@ -25,7 +25,7 @@ struct ApiActionDto: Decodable {
             case .link:
                 return "LINK"
             case .openInAppStore:
-                return "OPEN_IN_APP_STORE"
+                return "OPEN_APP_IN_APP_STORE"
             case let .unknown(value):
                 return value
             }
