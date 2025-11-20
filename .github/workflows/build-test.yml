@@ -34,7 +34,7 @@ jobs:
             destination: "OS=16.4,name=iPhone 14 Pro"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Set the fetch-depth > 1 or set to 0 for codecov upload detection
           fetch-depth: 2
