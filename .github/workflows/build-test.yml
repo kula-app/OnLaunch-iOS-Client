@@ -86,7 +86,7 @@ jobs:
             build 2>&1 | xcbeautify --preserve-unbeautified
 
       - name: Upload result files on failure
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: Result ${{ matrix.os }}.xcresult
