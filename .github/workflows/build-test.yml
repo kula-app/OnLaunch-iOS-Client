@@ -20,30 +20,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: "iOS 26"
+            runs-on: macos-26
+            destination: "OS=26.2,name=iPhone 17 Pro"
           - os: "iOS 18"
             runs-on: macos-15
-            xcode: "16.2"
-            destination: "OS=18.2,name=iPhone 16 Pro"
+            destination: "OS=18.6,name=iPhone 16 Pro"
           - os: "iOS 17"
-            runs-on: macos-15
-            xcode: "15.4"
+            runs-on: macos-14
             destination: "OS=17.5,name=iPhone 15 Pro"
-          - os: "iOS 16"
-            runs-on: macos-13
-            xcode: "14.3.1"
-            destination: "OS=16.4,name=iPhone 14 Pro"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           # Set the fetch-depth > 1 or set to 0 for codecov upload detection
           fetch-depth: 2
 
       - name: Enable development dependencies
         run: sed -i.bak "s/\/\/dev//g" Package.swift
-
-      - name: Select Xcode
-        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
       - name: Build & test package for iOS
         run: |
@@ -86,7 +80,7 @@ jobs:
             build 2>&1 | xcbeautify --preserve-unbeautified
 
       - name: Upload result files on failure
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: Result ${{ matrix.os }}.xcresult
